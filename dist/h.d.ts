@@ -116,5 +116,5 @@ declare const interpolate: <NODE extends Node = HTMLElement, DIRECTIVES extends 
  * @param templateExps Template expressions
  * @returns A parsed HTML template.
  */
-export declare const h: <NODE extends Node = DocumentFragment, DIRECTIVES extends ParsedTemplateDirectives = ParsedTemplateDirectives>(htmlStrings: TemplateStringsArray, ...templateExps: TemplateExps[]) => ParsedTemplate<NODE, DIRECTIVES>;
+export declare const h: <NODE extends Node = DocumentFragment, DIRECTIVES extends ParsedTemplateDirectives = ParsedTemplateDirectives>(htmlStrings: TemplateStringsArray, ...templateExps: TemplateExps[]) => ReturnType<typeof interpolate<NODE, DIRECTIVES>>;
 export {};

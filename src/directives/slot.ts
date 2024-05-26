@@ -1,4 +1,4 @@
-import { createDirective } from '../helpers/create-directive';
+import { createNodeTemplateDirective } from '../helpers/create-template-directive';
 
 /**
  * A unique name for the slottable element.
@@ -20,9 +20,8 @@ export type SlotDirective<SLOT_NAME extends SlotName> = Record<SLOT_NAME, Node>;
  * `;
  * tpl.badge = document.createElement('span');
  */
-export const _slot = createDirective<[SlotName]>({
-  type: 'node',
-  callback: (template, instances) => {
+export const _slot = createNodeTemplateDirective<[SlotName]>(
+  (template, instances) => {
     instances.forEach(({ node, args: [slotName] }) => {
       let currentNode: Text | Element = node;
       Object.defineProperty(template, slotName, {
@@ -42,4 +41,4 @@ export const _slot = createDirective<[SlotName]>({
       });
     });
   },
-});
+);

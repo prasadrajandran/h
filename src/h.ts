@@ -1,25 +1,28 @@
 import type {
-  DirectiveDefinition,
-  DirectiveInstance,
-  TemplateDirectiveResults,
-  createDirective,
-} from './helpers/create-directive';
+  TemplateDirectiveCallback,
+  TemplateDirectiveInstance,
+  ParsedTemplateDirectives,
+  createAttrTemplateDirective,
+  createNodeTemplateDirective,
+} from './helpers/create-template-directive';
 import { attrs } from './helpers/attrs';
 import { createRef } from './helpers/create-ref';
 import { isPlainObject } from './helpers/is-plain-object';
-import { isDirective } from './helpers/is-directive';
+import { isTemplateDirective } from './helpers/is-template-directive';
 import { isParsedTemplate } from './helpers/is-parsed-template';
 
 /**
  * A template that has been parsed by h.
  */
 export type ParsedTemplate<
-  NODE_TYPE = HTMLElement,
-  DIRECTIVES extends TemplateDirectiveResults = TemplateDirectiveResults,
+  NODE extends Node = HTMLElement,
+  DIRECTIVES extends ParsedTemplateDirectives = ParsedTemplateDirectives,
 > = {
-  $id: typeof parsedTemplateId;
-  $cb: TemplateCallbackSet;
-  $node: NODE_TYPE;
+  $: {
+    id: typeof parsedTemplateId;
+    callbacks: TemplateCallbackSet;
+    node: NODE;
+  };
 } & DIRECTIVES;
 
 /**
@@ -57,30 +60,31 @@ export type TemplateAttrsExp<
  * A "directive" template expression.
  */
 export type TemplateDirectiveExp = ReturnType<
-  ReturnType<typeof createDirective>
+  | ReturnType<typeof createAttrTemplateDirective>
+  | ReturnType<typeof createNodeTemplateDirective>
 >;
 
 export type TemplateCallbackRef<
-  NODE_TYPE extends HTMLElement = HTMLElement,
+  NODE extends HTMLElement = HTMLElement,
   PARSED_TEMPLATE extends ParsedTemplate = ParsedTemplate,
-> = ElementRef<NODE_TYPE> & { tpl: PARSED_TEMPLATE };
+> = ElementRef<NODE> & { tpl: PARSED_TEMPLATE };
 
 /**
  * A "callback" template expression.
  *
  * Notes:
- * - All callbacks expressions are collected into a set call "$cb" that is
- *   attached to a parsed template.
- * - This callback is not executed until $cb.run() is called. This allows you
- *   to control when callbacks which allows for the creation of more complex
- *   closures.
- * - If the callback returns false, it will be removed from "$cb" the first
- *   time it is executed (i.e. one-off callbacks expressions).
+ * - All callbacks expressions are collected into a set called "$.callbacks"
+ *   that is attached to a parsed template.
+ * - This callback is not executed until $.callbacks.run() is called. This
+ *   allows you to control when callbacks which allows for the creation of more
+ *   complex closures.
+ * - If the callback returns false, it will be removed from "$.callbacks" the
+ *   first time it is executed (i.e. one-off callbacks expressions).
  */
 export type TemplateCallbackExp<
-  NODE_TYPE extends HTMLElement = HTMLElement,
+  NODE extends HTMLElement = HTMLElement,
   PARSED_TEMPLATE extends ParsedTemplate = ParsedTemplate,
-> = (ref: TemplateCallbackRef<NODE_TYPE, PARSED_TEMPLATE>) => unknown;
+> = (ref: TemplateCallbackRef<NODE, PARSED_TEMPLATE>) => unknown;
 
 /**
  * Valid template expressions.
@@ -90,6 +94,8 @@ type TemplateExps =
   | string
   | number
   | boolean
+  | null
+  | undefined
   | Node
   | TemplateAttrsExp
   | TemplateCallbackExp
@@ -99,6 +105,8 @@ type TemplateExps =
       | string
       | number
       | boolean
+      | null
+      | undefined
       | Node
       | TemplateAttrsExp
       | TemplateCallbackExp
@@ -244,7 +252,9 @@ const tag = (
         // TODO: should we escape expression automatically?
 
         const expType = typeof exp;
-        if (
+        if (exp === null || exp === undefined) {
+          // Do nothing
+        } else if (
           expType === 'string' ||
           expType === 'number' ||
           expType === 'boolean'
@@ -257,14 +267,12 @@ const tag = (
           taggedExps.set(expCount, exp as Node);
           htmlChunk += tagNodeExp(expCount);
         } else if (isParsedTemplate(exp)) {
-          taggedExps.set(expCount, exp.$node);
+          taggedExps.set(expCount, exp.$.node);
           htmlChunk += tagNodeExp(expCount);
-        } else if (isDirective(exp)) {
+        } else if (isTemplateDirective(exp)) {
           taggedExps.set(expCount, exp);
           htmlChunk +=
-            exp.def.type === 'attr'
-              ? tagAttrsExp(expCount)
-              : tagNodeExp(expCount);
+            exp.type === 'attr' ? tagAttrsExp(expCount) : tagNodeExp(expCount);
         } else if (isPlainObject(exp)) {
           taggedExps.set(expCount, exp as TemplateAttrsExp);
           htmlChunk += tagAttrsExp(expCount);
@@ -295,19 +303,19 @@ const tag = (
  * @param template Tagged template
  */
 const interpolate = <
-  NODE_TYPE = HTMLElement,
-  DIRECTIVES extends TemplateDirectiveResults = TemplateDirectiveResults,
+  NODE extends Node = HTMLElement,
+  DIRECTIVES extends ParsedTemplateDirectives = ParsedTemplateDirectives,
 >({
   taggedTemplate,
   taggedExps,
   createErrorTemplate,
-}: ReturnType<typeof tag>): ParsedTemplate<NODE_TYPE, DIRECTIVES> => {
-  type Template = ParsedTemplate<NODE_TYPE, DIRECTIVES>;
+}: ReturnType<typeof tag>): ParsedTemplate<NODE, DIRECTIVES> => {
+  type Template = ParsedTemplate<NODE, DIRECTIVES>;
 
   const fragment = taggedTemplate.content.cloneNode(true) as DocumentFragment;
   const directives = new Map<
-    DirectiveDefinition<unknown[], HTMLElement>,
-    DirectiveInstance[]
+    TemplateDirectiveExp['callback'],
+    TemplateDirectiveInstance[]
   >();
 
   const refs: TemplateCallbackRef[] = [];
@@ -331,11 +339,11 @@ const interpolate = <
 
     if (exp instanceof Node) {
       node.replaceWith(exp);
-    } else if (isDirective(exp)) {
-      const { def, args } = exp;
-      const instances = directives.get(def) || [];
+    } else if (isTemplateDirective(exp)) {
+      const { args, callback } = exp;
+      const instances = directives.get(callback) || [];
       instances.push({ node, index: expIndex, args });
-      directives.set(def, instances);
+      directives.set(callback, instances);
     } else if (typeof exp === 'function') {
       const ref = createRef(node) as TemplateCallbackRef;
       refs.push(ref);
@@ -347,30 +355,22 @@ const interpolate = <
 
   const template = new Proxy<Template>(
     Object.defineProperties({} as Template, {
-      $id: {
-        value: parsedTemplateId,
-        enumerable: false,
-      },
-      $cb: {
-        value: callbackExps,
-        enumerable: false,
-      },
-      $node: {
-        value:
-          fragment.childNodes.length === 1 ? fragment.childNodes[0] : fragment,
+      $: {
+        value: {
+          id: parsedTemplateId,
+          callbacks: callbackExps,
+          node:
+            fragment.childNodes.length === 1
+              ? fragment.childNodes[0]
+              : fragment,
+        },
         enumerable: false,
       },
     }),
     {
       defineProperty(target, key, descriptor) {
-        if (typeof key === 'string' && key.startsWith('$')) {
-          throw new Error(
-            'The "$" prefix is reserved and cannot be used to declare ' +
-              `additional properties on a parsed template: "${key}"`,
-          );
-        }
         if (key in target) {
-          throw new Error(`Duplicate parsed template key: "${String(key)}"`);
+          throw new Error(`Duplicate template key: "${String(key)}"`);
         }
         Object.defineProperty(target, key, descriptor);
         return true;
@@ -381,8 +381,11 @@ const interpolate = <
   // Attach parsed template to all callback refs.
   refs.forEach((ref) => Object.defineProperty(ref, 'tpl', { value: template }));
 
-  directives.forEach((instances, { callback }) => {
-    callback(template, instances);
+  directives.forEach((instances, callback) => {
+    (callback as unknown as TemplateDirectiveCallback<unknown[]>)(
+      template as unknown as ParsedTemplate,
+      instances,
+    );
   });
 
   return template;
@@ -395,11 +398,11 @@ const interpolate = <
  * @returns A parsed HTML template.
  */
 export const h = <
-  NODE_TYPE = HTMLElement,
-  DIRECTIVES extends TemplateDirectiveResults = TemplateDirectiveResults,
+  NODE extends Node = DocumentFragment,
+  DIRECTIVES extends ParsedTemplateDirectives = ParsedTemplateDirectives,
 >(
   htmlStrings: TemplateStringsArray,
   ...templateExps: TemplateExps[]
-): ReturnType<typeof interpolate<NODE_TYPE, DIRECTIVES>> => {
+): ReturnType<typeof interpolate<NODE, DIRECTIVES>> => {
   return interpolate(tag(htmlStrings, templateExps));
 };

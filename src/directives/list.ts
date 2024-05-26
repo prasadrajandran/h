@@ -1,4 +1,4 @@
-import { createDirective } from '../helpers/create-directive';
+import { createAttrTemplateDirective } from '../helpers/create-template-directive';
 import { ListNode, createList } from '../helpers/create-list';
 
 /**
@@ -34,7 +34,7 @@ export type ListDirective<
  *
  * const tpl = html`
  *   <div
- *     ${_list({
+ *     ${$list({
  *       name: 'tasks',
  *       items: new Map([
  *         ['gudjIy', "Task 1"],
@@ -52,12 +52,11 @@ export type ListDirective<
  *
  * @param args List data.
  */
-export const _list = <ITEM, ELEMENT extends ListNode>(
+export const $list = <ITEM, ELEMENT extends ListNode>(
   args: ListData<ITEM, ELEMENT>,
 ) => {
-  return createDirective<[ListData<ITEM, ELEMENT>]>({
-    type: 'attr',
-    callback: (template, instances) => {
+  return createAttrTemplateDirective<[ListData<ITEM, ELEMENT>]>(
+    (template, instances) => {
       instances.forEach(({ node, args: [opts] }) => {
         const { name } = opts;
         const list = { ...opts, container: node };
@@ -74,5 +73,5 @@ export const _list = <ITEM, ELEMENT extends ListNode>(
         createList(list);
       });
     },
-  })(args);
+  )(args);
 };

@@ -70,7 +70,7 @@ const createNodeCallback = () => {
     expect(Number(key)).toEqual(index);
     expect(typeof id).toEqual('string');
     expect(typeof name).toEqual('string');
-    return html`<div>${id}<br />${name}</div>`.$node;
+    return html`<div>${id}<br />${name}</div>`.$.node;
   });
 };
 
@@ -120,7 +120,7 @@ describe('createList()', () => {
 
   test('Accepts maps, sets, arrays, and objects and only container, items, and node are required', () => {
     [itemsArr, itemsObj, itemsMap, itemsSet].forEach((items) => {
-      const container = html`<div></div>`.$node;
+      const container = html`<div></div>`.$.node;
       const node = createNodeCallback();
 
       createList({
@@ -182,7 +182,7 @@ describe('createList()', () => {
 
   test('Can change key value', () => {
     [itemsArr, itemsObj, itemsMap, itemsSet].forEach((items) => {
-      const container = html`<div></div>`.$node;
+      const container = html`<div></div>`.$.node;
       const node = createNodeCallback();
 
       createList({
@@ -245,7 +245,7 @@ describe('createList()', () => {
 
   test('Can change key value and key name', () => {
     [itemsArr, itemsObj, itemsMap, itemsSet].forEach((items) => {
-      const container = html`<div></div>`.$node;
+      const container = html`<div></div>`.$.node;
       const node = createNodeCallback();
 
       createList({
@@ -309,7 +309,7 @@ describe('createList()', () => {
 
   test('Calls ref() on every item', () => {
     [itemsArr, itemsObj, itemsMap, itemsSet].forEach((items) => {
-      const container = html`<div></div>`.$node;
+      const container = html`<div></div>`.$.node;
       const node = createNodeCallback();
       const ref = createRefCallback();
 
@@ -374,7 +374,7 @@ describe('createList()', () => {
 
   test('Does not render nodes if their keys have not changed', () => {
     [itemsArr, itemsObj, itemsMap, itemsSet].forEach((items) => {
-      const container = html`<div></div>`.$node;
+      const container = html`<div></div>`.$.node;
       const node = createNodeCallback();
       const firstCallNodes = [];
       const secondCallNodes = [];
@@ -403,14 +403,14 @@ describe('createList()', () => {
 
   test('Removes entries that have been deleted and adds new entries that have been added', () => {
     [itemsArr, itemsObj, itemsMap, itemsSet].forEach((items) => {
-      const container = html`<div></div>`.$node;
+      const container = html`<div></div>`.$.node;
       const item6 = createItem('X-29', 'Sheldon');
       const entries = addItem(removeItem(items, item1, item3), 6, item6);
 
       createList({
         container,
         items: entries,
-        node: ({ id, name }) => html` <div>${id}<br />${name}</div> `.$node,
+        node: ({ id, name }) => html` <div>${id}<br />${name}</div> `.$.node,
         key: ({ id }) => id,
         keyName: 'k',
       });
@@ -468,7 +468,7 @@ describe('createList()', () => {
         <div>
           <div ${{ $ref: (el) => (innerContainer = el) }}></div>
         </div>
-      `.$node;
+      `.$.node;
 
       expect(container).toBeInstanceOf(HTMLDivElement);
       expect(innerContainer).toBeInstanceOf(HTMLDivElement);

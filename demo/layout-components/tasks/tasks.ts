@@ -8,7 +8,7 @@ import type {
   onViewModeUpdate,
 } from '../../state';
 import { html } from '../../../dist/index';
-import { _list } from '../../../dist/directives';
+import { $list } from '../../../dist/directives';
 import { createStyle } from '../../helpers/create-style';
 import { TaskElement, TaskProps } from './task';
 
@@ -63,7 +63,7 @@ export const TasksElement = ({
     <ol
       class="list-group list-group-flush text-start"
       ${{ className: cssScope }}
-      ${_list({
+      ${$list({
         name: 'tasks',
         items: getTasks(),
         node: (task) =>

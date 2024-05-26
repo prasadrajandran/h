@@ -27,7 +27,7 @@ export type ListDirective<LISTS extends Record<ListName, Parameters<typeof creat
  *
  * const tpl = html`
  *   <div
- *     ${_list({
+ *     ${$list({
  *       name: 'tasks',
  *       items: new Map([
  *         ['gudjIy', "Task 1"],
@@ -45,9 +45,10 @@ export type ListDirective<LISTS extends Record<ListName, Parameters<typeof creat
  *
  * @param args List data.
  */
-export declare const _list: <ITEM, ELEMENT extends ListNode>(args: ListData<ITEM, ELEMENT>) => {
+export declare const $list: <ITEM, ELEMENT extends ListNode>(args: ListData<ITEM, ELEMENT>) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[ListData<ITEM, ELEMENT>], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[ListData<ITEM, ELEMENT>], HTMLElement, import("../h").ParsedTemplate>;
     args: [ListData<ITEM, ELEMENT>];
 };
 export {};

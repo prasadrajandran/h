@@ -18,7 +18,8 @@ export type SlotDirective<SLOT_NAME extends SlotName> = Record<SLOT_NAME, Node>;
  */
 export declare const _slot: (args_0: string) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[string], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[string], HTMLTemplateElement, import("../h").ParsedTemplate>;
     args: [string];
 };
 export {};

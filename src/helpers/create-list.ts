@@ -130,7 +130,7 @@ export const createList = <ITEM, NODE extends ListNode>({
 
     existingElements.delete(elementKey);
 
-    const node = isParsedTemplate(element) ? element.$node : element;
+    const node = isParsedTemplate(element) ? element.$.node : element;
 
     if (!(node instanceof Element)) {
       throw new Error('Each list item must contain only a single root node');

@@ -1,5 +1,5 @@
 import type { ElementRef } from '../h';
-import { createDirective } from '../helpers/create-directive';
+import { createAttrTemplateDirective } from '../helpers/create-template-directive';
 import { createRef } from '../helpers/create-ref';
 
 /**
@@ -26,18 +26,17 @@ export type RefDirective<
  *       <input type="text">
  *     </div>
  *     <div>
- *       <button type="submit" ${_ref('submitBtn')}>Submit</button>
+ *       <button type="submit" ${$ref('submitBtn')}>Submit</button>
  *     </div>
  *   </form>
  * `;
  * tpl.submitBtn.node.click();
  * tpl.submitBtn.attrMap({ disable: true });
  */
-export const _ref = createDirective<[ReferencedElementName]>({
-  type: 'attr',
-  callback: (template, instances) => {
+export const $ref = createAttrTemplateDirective<[ReferencedElementName]>(
+  (template, instances) => {
     instances.forEach(({ node, args: [key] }) => {
       Object.defineProperty(template, key, { value: createRef(node) });
     });
   },
-});
+);

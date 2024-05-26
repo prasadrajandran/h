@@ -1,5 +1,5 @@
 import type { ParsedTemplate } from '../h';
-import { createDirective } from '../helpers/create-directive';
+import { createNodeTemplateDirective } from '../helpers/create-template-directive';
 
 /**
  * Merge directive options.
@@ -34,7 +34,7 @@ export type MergeDirective<
  * const Input = (name, label) => html`
  *   <div>
  *     <label>${label}</label>
- *     <input type="text" ${{ name }} ${_ref(name)}>
+ *     <input type="text" ${{ name }} ${$ref(name)}>
  *   </div>
  * `;
  *
@@ -42,7 +42,7 @@ export type MergeDirective<
  *   <form>
  *     ${Input('firstName', 'First name')}
  *     ${Input('lastName', 'Last name')}
- *     <button type="submit" ${_ref('submitBtn')}>Submit</button>
+ *     <button type="submit" ${$ref('submitBtn')}>Submit</button>
  *   </form>
  * `;
  *
@@ -50,33 +50,28 @@ export type MergeDirective<
  * tpl.lastName.node.value = 'Smith';
  * tpl.submitBtn.node.click();
  */
-export const _merge = createDirective<[ParsedTemplate, MergeOptions?]>({
-  type: 'node',
-  callback: (template, instances) => {
-    instances.forEach(({ node, args: [templateToMerge, opts = {}] }) => {
-      node.replaceWith(templateToMerge.$node);
+export const $merge = createNodeTemplateDirective<
+  [ParsedTemplate, MergeOptions?]
+>((template, instances) => {
+  instances.forEach(({ node, args: [templateToMerge, opts = {}] }) => {
+    node.replaceWith(templateToMerge.$.node);
 
-      const {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        $id,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        $node,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        $cb,
-        ...directives
-      } = Object.getOwnPropertyDescriptors(templateToMerge);
+    const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      $,
+      ...directives
+    } = Object.getOwnPropertyDescriptors(templateToMerge);
 
-      if (opts.directives !== false) {
-        Object.defineProperties(template, directives);
-      }
+    if (opts.directives !== false) {
+      Object.defineProperties(template, directives);
+    }
 
-      if (opts.callbacks === true) {
-        templateToMerge.$cb.forEach((callback) => {
-          template.$cb.add(callback);
-        });
-      }
-    });
-  },
+    if (opts.callbacks === true) {
+      templateToMerge.$.callbacks.forEach((callback) => {
+        template.$.callbacks.add(callback);
+      });
+    }
+  });
 });
 
 /**
@@ -93,7 +88,7 @@ export const _merge = createDirective<[ParsedTemplate, MergeOptions?]>({
  * const Input = (name, label) => html`
  *   <div>
  *     <label>${label}</label>
- *     <input type="text" ${{ name }} ${_ref(name)}>
+ *     <input type="text" ${{ name }} ${$ref(name)}>
  *   </div>
  * `;
  *
@@ -101,7 +96,7 @@ export const _merge = createDirective<[ParsedTemplate, MergeOptions?]>({
  *   <form>
  *     ${Input('firstName', 'First name')}
  *     ${Input('lastName', 'Last name')}
- *     <button type="submit" ${_ref('submitBtn')}>Submit</button>
+ *     <button type="submit" ${$ref('submitBtn')}>Submit</button>
  *   </form>
  * `;
  *
@@ -109,5 +104,5 @@ export const _merge = createDirective<[ParsedTemplate, MergeOptions?]>({
  * tpl.lastName.node.value = 'Smith';
  * tpl.submitBtn.node.click();
  */
-export const _mergeAll = (template: ParsedTemplate) =>
-  _merge(template, { callbacks: true, directives: true });
+export const $mergeAll = (template: ParsedTemplate) =>
+  $merge(template, { callbacks: true, directives: true });

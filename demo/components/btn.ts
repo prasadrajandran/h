@@ -4,7 +4,7 @@ import type {
   TemplateAttrsExp,
 } from '../../dist/h';
 import { html } from '../../dist/index';
-import { _mergeAll, _ref } from '../../dist/directives';
+import { $mergeAll, $ref } from '../../dist/directives';
 import { Icon } from './icon';
 
 type Props = TemplateAttrsExp<{
@@ -40,12 +40,12 @@ export const Btn = ({
   const btnClassType = `btn-outline-${variant || 'primary'}`;
   const iconElement = icon ? Icon(icon, updateIcon || false) : '';
 
-  return _mergeAll(html<HTMLButtonElement>/* html */ `
+  return $mergeAll(html<HTMLButtonElement>/* html */ `
     <button
       type="button"
       class="btn ${btnClassType} ${btnSize}"
       ${props}
-      ${ref && _ref(ref)}
+      ${ref && $ref(ref)}
       ${update}
     >
       ${iconElement} ${child}

@@ -37,7 +37,8 @@ export type FnDirective<FUNCTION_NAMES extends Record<FunctionName, FunctionBody
  */
 export declare const _fn: (args_0: string, args_1: (ref: TemplateCallbackRef, ...args: never[]) => unknown) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[string, (ref: TemplateCallbackRef, ...args: never[]) => unknown], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[string, (ref: TemplateCallbackRef, ...args: never[]) => unknown], HTMLElement, import("../h").ParsedTemplate>;
     args: [string, (ref: TemplateCallbackRef, ...args: never[]) => unknown];
 };
 export {};

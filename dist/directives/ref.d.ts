@@ -18,15 +18,16 @@ export type RefDirective<NODE_REFS extends {
  *       <input type="text">
  *     </div>
  *     <div>
- *       <button type="submit" ${_ref('submitBtn')}>Submit</button>
+ *       <button type="submit" ${$ref('submitBtn')}>Submit</button>
  *     </div>
  *   </form>
  * `;
  * tpl.submitBtn.node.click();
  * tpl.submitBtn.attrMap({ disable: true });
  */
-export declare const _ref: (args_0: string) => {
+export declare const $ref: (args_0: string) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[string], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[string], HTMLElement, import("../h").ParsedTemplate>;
     args: [string];
 };

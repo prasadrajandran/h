@@ -2,7 +2,7 @@ import type { RefDirective } from '../../../dist/directives/ref';
 import type { TextDirective } from '../../../dist/directives/text';
 import type { deleteTask, getViewMode, updateTask } from '../../state';
 import { Task, onTaskUpdate, onViewModeUpdate } from '../../state'; // TODO: fix this is being used directly
-import { _ref, _text } from '../../../dist/directives';
+import { $ref, $text } from '../../../dist/directives';
 import { html } from '../../../dist/index';
 import { LifecycleCallbacks } from '../../helpers/lifecycle-callbacks';
 import { Btn } from '../../components/btn';
@@ -145,7 +145,7 @@ export const TaskElement = ({
                 fontStyle: complete ? 'italic' : '',
               });
             }}
-            >${_text('task')}</span
+            >${$text('task')}</span
           >
         </div>
 

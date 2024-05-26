@@ -12,22 +12,23 @@ export type NestDirective<NESTED_TEMPLATE extends {
  *
  * const Component = () => html`
  *   <div>
- *     <p>${_text('label')}</p>
+ *     <p>${$text('label')}</p>
  *   </div>
  * `;
  *
  * const tpl = html`
  *   <div>
- *     ${_nest('componentA', Component())}
- *     ${_nest('componentB', Component())}
+ *     ${$nest('componentA', Component())}
+ *     ${$nest('componentB', Component())}
  *   </div>
  * `;
  *
  * tpl.componentA.label = 'Something...';
  * tpl.componentB.label = 'Else...';
  */
-export declare const _nest: (args_0: string, args_1: ParsedTemplate) => {
+export declare const $nest: (args_0: string, args_1: ParsedTemplate) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[string, ParsedTemplate], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[string, ParsedTemplate], HTMLTemplateElement, ParsedTemplate>;
     args: [string, ParsedTemplate];
 };

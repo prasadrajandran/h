@@ -1,5 +1,5 @@
 import type { TemplateCallbackRef } from '../h';
-import { createDirective } from '../helpers/create-directive';
+import { createAttrTemplateDirective } from '../helpers/create-template-directive';
 import { createRef } from '../helpers/create-ref';
 
 /**
@@ -45,19 +45,16 @@ export type FnDirective<
  * are defined in the template. So in the example above, the only argument that
  * would have to be supplied when the function is called is `backgroundColor`
  */
-export const _fn = createDirective<
+export const _fn = createAttrTemplateDirective<
   [FunctionName, (ref: TemplateCallbackRef, ...args: never[]) => unknown]
->({
-  type: 'attr',
-  callback: (template, instances) => {
-    instances.forEach(({ node, args: [name, callback] }) => {
-      const ref = Object.defineProperty(createRef(node), 'tpl', {
-        value: template,
-      }) as TemplateCallbackRef;
-      Object.defineProperty(template, name, {
-        enumerable: false,
-        value: callback.bind(callback, ref),
-      });
+>((template, instances) => {
+  instances.forEach(({ node, args: [name, callback] }) => {
+    const ref = Object.defineProperty(createRef(node), 'tpl', {
+      value: template,
+    }) as TemplateCallbackRef;
+    Object.defineProperty(template, name, {
+      enumerable: false,
+      value: callback.bind(callback, ref),
     });
-  },
+  });
 });

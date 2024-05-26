@@ -30,7 +30,7 @@ export type MergeDirective<M_TEMPLATE extends {
  * const Input = (name, label) => html`
  *   <div>
  *     <label>${label}</label>
- *     <input type="text" ${{ name }} ${_ref(name)}>
+ *     <input type="text" ${{ name }} ${$ref(name)}>
  *   </div>
  * `;
  *
@@ -38,7 +38,7 @@ export type MergeDirective<M_TEMPLATE extends {
  *   <form>
  *     ${Input('firstName', 'First name')}
  *     ${Input('lastName', 'Last name')}
- *     <button type="submit" ${_ref('submitBtn')}>Submit</button>
+ *     <button type="submit" ${$ref('submitBtn')}>Submit</button>
  *   </form>
  * `;
  *
@@ -46,9 +46,10 @@ export type MergeDirective<M_TEMPLATE extends {
  * tpl.lastName.node.value = 'Smith';
  * tpl.submitBtn.node.click();
  */
-export declare const _merge: (args_0: ParsedTemplate, args_1?: MergeOptions | undefined) => {
+export declare const $merge: (args_0: ParsedTemplate, args_1?: MergeOptions | undefined) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[ParsedTemplate, MergeOptions?], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[ParsedTemplate, MergeOptions?], HTMLTemplateElement, ParsedTemplate>;
     args: [ParsedTemplate, MergeOptions?];
 };
 /**
@@ -65,7 +66,7 @@ export declare const _merge: (args_0: ParsedTemplate, args_1?: MergeOptions | un
  * const Input = (name, label) => html`
  *   <div>
  *     <label>${label}</label>
- *     <input type="text" ${{ name }} ${_ref(name)}>
+ *     <input type="text" ${{ name }} ${$ref(name)}>
  *   </div>
  * `;
  *
@@ -73,7 +74,7 @@ export declare const _merge: (args_0: ParsedTemplate, args_1?: MergeOptions | un
  *   <form>
  *     ${Input('firstName', 'First name')}
  *     ${Input('lastName', 'Last name')}
- *     <button type="submit" ${_ref('submitBtn')}>Submit</button>
+ *     <button type="submit" ${$ref('submitBtn')}>Submit</button>
  *   </form>
  * `;
  *
@@ -81,9 +82,10 @@ export declare const _merge: (args_0: ParsedTemplate, args_1?: MergeOptions | un
  * tpl.lastName.node.value = 'Smith';
  * tpl.submitBtn.node.click();
  */
-export declare const _mergeAll: (template: ParsedTemplate) => {
+export declare const $mergeAll: (template: ParsedTemplate) => {
     id: string;
-    def: import("../helpers/create-directive").DirectiveDefinition<[ParsedTemplate, MergeOptions?], HTMLElement>;
+    type: string;
+    callback: import("../helpers/create-template-directive").TemplateDirectiveCallback<[ParsedTemplate, MergeOptions?], HTMLTemplateElement, ParsedTemplate>;
     args: [ParsedTemplate, MergeOptions?];
 };
 export {};

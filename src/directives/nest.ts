@@ -1,5 +1,5 @@
 import type { ParsedTemplate } from '../h';
-import { createDirective } from '../helpers/create-directive';
+import { createNodeTemplateDirective } from '../helpers/create-template-directive';
 
 /**
  * Name of the nested template.
@@ -21,29 +21,28 @@ export type NestDirective<
  *
  * const Component = () => html`
  *   <div>
- *     <p>${_text('label')}</p>
+ *     <p>${$text('label')}</p>
  *   </div>
  * `;
  *
  * const tpl = html`
  *   <div>
- *     ${_nest('componentA', Component())}
- *     ${_nest('componentB', Component())}
+ *     ${$nest('componentA', Component())}
+ *     ${$nest('componentB', Component())}
  *   </div>
  * `;
  *
  * tpl.componentA.label = 'Something...';
  * tpl.componentB.label = 'Else...';
  */
-export const _nest = createDirective<[NestedTemplateName, ParsedTemplate]>({
-  type: 'node',
-  callback: (template, instances) => {
-    instances.forEach(({ node, args: [name, componentTemplate] }) => {
-      node.appendChild(componentTemplate.$node);
-      Object.defineProperty(template, name, {
-        value: componentTemplate,
-        enumerable: true,
-      });
+export const $nest = createNodeTemplateDirective<
+  [NestedTemplateName, ParsedTemplate]
+>((template, instances) => {
+  instances.forEach(({ node, args: [name, componentTemplate] }) => {
+    node.appendChild(componentTemplate.$.node);
+    Object.defineProperty(template, name, {
+      value: componentTemplate,
+      enumerable: true,
     });
-  },
+  });
 });

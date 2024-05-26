@@ -3,7 +3,7 @@ import type {
   TemplateCallbackExp,
   TemplateDirectiveExp,
 } from '../../dist/h';
-import { _mergeAll } from '../../dist/directives';
+import { $mergeAll } from '../../dist/directives';
 import { html } from '../../dist/index';
 
 export const Icon = (
@@ -15,7 +15,7 @@ export const Icon = (
     | TemplateCallbackExp
   )[]
 ) => {
-  return _mergeAll(
+  return $mergeAll(
     html`<i
       class="bi bi-${type}"
       ${templateArgs}

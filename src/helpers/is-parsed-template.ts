@@ -7,5 +7,11 @@ import { isPlainObject } from './is-plain-object';
  * @param arg Argument to check.
  */
 export const isParsedTemplate = (arg: unknown): arg is ParsedTemplate => {
-  return isPlainObject(arg) && '$id' in arg && arg['$id'] === parsedTemplateId;
+  return (
+    isPlainObject(arg) &&
+    '$' in arg &&
+    isPlainObject(arg.$) &&
+    'id' in arg.$ &&
+    arg.$.id === parsedTemplateId
+  );
 };

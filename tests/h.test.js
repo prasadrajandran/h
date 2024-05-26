@@ -1,26 +1,26 @@
 import { html } from '../dist';
-import { _ref } from '../dist/directives';
+import { $ref } from '../dist/directives';
 
 describe('h()', () => {
   test('Returns root node instance directly if template contains a single root node', () => {
-    expect(html`<div></div>`.$node).toBeInstanceOf(HTMLDivElement);
-    expect(html`<p></p>`.$node).toBeInstanceOf(HTMLParagraphElement);
+    expect(html`<div></div>`.$.node).toBeInstanceOf(HTMLDivElement);
+    expect(html`<p></p>`.$.node).toBeInstanceOf(HTMLParagraphElement);
     expect(
       html`<div>
         <p><br /></p>
-      </div>`.$node,
+      </div>`.$.node,
     ).toBeInstanceOf(HTMLDivElement);
-    expect(html`This is a test!`.$node).toBeInstanceOf(Text);
+    expect(html`This is a test!`.$.node).toBeInstanceOf(Text);
     expect(html`
       This is a test! This is only a test! I repeat, this is a test, this is
       only a test! This is a test! This is only a test! I repeat, this is a
       test, this is only a test!
-    `.$node).toBeInstanceOf(Text);
+    `.$.node).toBeInstanceOf(Text);
   });
 
   test('Leading/trailing whitespace do not affect calculation of number of root nodes', () => {
-    expect(html`<div></div> `.$node).toBeInstanceOf(HTMLDivElement);
-    expect(html`<p></p> `.$node).toBeInstanceOf(HTMLParagraphElement);
+    expect(html`<div></div> `.$.node).toBeInstanceOf(HTMLDivElement);
+    expect(html`<p></p> `.$.node).toBeInstanceOf(HTMLParagraphElement);
     expect(html`
       <div>
         <p>
@@ -28,21 +28,21 @@ describe('h()', () => {
           <br />
         </p>
       </div>
-    `.$node).toBeInstanceOf(HTMLDivElement);
+    `.$.node).toBeInstanceOf(HTMLDivElement);
   });
 
   test('Returns a document fragment if template contains more than one root node', () => {
     expect(html`
       <div></div>
       <div></div>
-    `.$node).toBeInstanceOf(DocumentFragment);
+    `.$.node).toBeInstanceOf(DocumentFragment);
     expect(html`
       This is a test!
       <p>This is a test!</p>
       <div>
         <p>This is a test!</p>
       </div>
-    `.$node).toBeInstanceOf(DocumentFragment);
+    `.$.node).toBeInstanceOf(DocumentFragment);
   });
 
   test('Correctly interpolates strings, numbers, and booleans', () => {
@@ -66,7 +66,7 @@ describe('h()', () => {
       </form>
     `;
 
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
 
     expect(input).toBeInstanceOf(HTMLInputElement);
     expect(input.min).toBe(String(min));
@@ -91,7 +91,7 @@ describe('h()', () => {
       </form>
     `;
 
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
 
     expect(btn).toBeInstanceOf(HTMLButtonElement);
     expect(btn.onclick).toBe(onclick);
@@ -103,7 +103,7 @@ describe('h()', () => {
   test('Correctly interpolates object attributes', () => {
     const type = 'number';
     const min = 50;
-    const input = html`<input ${{ type, min, disabled: '' }} /> `.$node;
+    const input = html`<input ${{ type, min, disabled: '' }} /> `.$.node;
 
     expect(input).toBeInstanceOf(HTMLInputElement);
     expect(input.type).toBe(type);
@@ -117,7 +117,7 @@ describe('h()', () => {
       padding: '0px 0px 50px 100px',
       display: 'inline-block',
     };
-    const btn = html`<button ${{ type, style }}>Submit</button> `.$node;
+    const btn = html`<button ${{ type, style }}>Submit</button> `.$.node;
 
     expect(btn).toBeInstanceOf(HTMLButtonElement);
     expect(btn.type).toBe(type);
@@ -134,7 +134,7 @@ describe('h()', () => {
       isImportant: false,
       longPropertyName: 0,
     };
-    const div = html`<div ${{ '[role]': role, dataset }}>Submit</div> `.$node;
+    const div = html`<div ${{ '[role]': role, dataset }}>Submit</div> `.$.node;
 
     expect(div).toBeInstanceOf(HTMLDivElement);
     expect(div.getAttribute('role')).toBe(role);
@@ -154,15 +154,15 @@ describe('h()', () => {
 
   test('Correctly interpolates nodes', () => {
     const btnText = new Text('Submit');
-    const textInput = html`<input type="text" />`.$node;
-    const radioInput = html`<input type="radio" />`.$node;
-    const submitBtn = html`<button type="submit">${btnText}</button>`.$node;
+    const textInput = html`<input type="text" />`.$.node;
+    const radioInput = html`<input type="radio" />`.$.node;
+    const submitBtn = html`<button type="submit">${btnText}</button>`.$.node;
     const form = html`
       <form>
         <div>${textInput} ${radioInput}</div>
         <p>${submitBtn}</p>
       </form>
-    `.$node;
+    `.$.node;
 
     expect(form.querySelector('input[type="text"]')).toBe(textInput);
     expect(form.querySelector('input[type="radio"]')).toBe(radioInput);
@@ -237,10 +237,10 @@ describe('h()', () => {
   });
 
   test('Snapshot matches', () => {
-    const input1 = html`First name: <input type="text" />`.$node;
-    const input2 = html`Last name: <input type="text" />`.$node;
-    const input3 = html`Age: <input type="number" />`.$node;
-    const input4 = html`Address: <input type="text" />`.$node;
+    const input1 = html`First name: <input type="text" />`.$.node;
+    const input2 = html`Last name: <input type="text" />`.$.node;
+    const input3 = html`Age: <input type="number" />`.$.node;
+    const input4 = html`Address: <input type="text" />`.$.node;
     const btnProps = {
       '[type]': 'submit',
       style: {
@@ -252,13 +252,13 @@ describe('h()', () => {
         isDefault: 'false',
       },
     };
-    const btn = html`<button ${btnProps}>Submit</button>`.$node;
+    const btn = html`<button ${btnProps}>Submit</button>`.$.node;
 
     expect(html`
       <form>
         <div>${input1} ${input2} ${input3} ${input4}</div>
         <div>${btn}</div>
       </form>
-    `.$node).toMatchSnapshot();
+    `.$.node).toMatchSnapshot();
   });
 });

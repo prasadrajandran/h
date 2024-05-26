@@ -19,9 +19,8 @@ export const Icon = (
     html`<i
       class="bi bi-${type}"
       ${templateArgs}
-      ${updateIcon
-        ? ({ attrMap }) => attrMap({ class: `bi bi-${updateIcon()}` })
-        : ''}
+      ${updateIcon &&
+      (({ attrMap }) => attrMap({ class: `bi bi-${updateIcon()}` }))}
     ></i>`,
   );
 };

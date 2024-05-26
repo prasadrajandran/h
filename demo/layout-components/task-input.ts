@@ -57,7 +57,7 @@ export const TaskInput = ({
         break;
       }
     }
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
   });
 
   const tpl = html<HTMLFormElement, Directives>/* html */ `<form
@@ -114,7 +114,7 @@ export const TaskInput = ({
   </form>`;
 
   allTasksComplete = areAllTasksComplete();
-  tpl.$cb.run();
+  tpl.$.callbacks.run();
 
   return tpl;
 };

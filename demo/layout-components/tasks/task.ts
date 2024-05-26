@@ -1,7 +1,7 @@
 import type { RefDirective } from '../../../dist/directives/ref';
 import type { TextDirective } from '../../../dist/directives/text';
 import type { deleteTask, getViewMode, updateTask } from '../../state';
-import { Task, onTaskUpdate, onViewModeUpdate } from '../../state';
+import { Task, onTaskUpdate, onViewModeUpdate } from '../../state'; // TODO: fix this is being used directly
 import { _ref, _text } from '../../../dist/directives';
 import { html } from '../../../dist/index';
 import { LifecycleCallbacks } from '../../helpers/lifecycle-callbacks';
@@ -37,7 +37,7 @@ export const TaskElement = ({
 
   const enableEditing = () => {
     isEditing = true;
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
   };
 
   const updateTaskValue = () => {
@@ -48,7 +48,7 @@ export const TaskElement = ({
     isEditing = false;
     task.value = tpl.taskInput.node.value;
     updateTask([task]);
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
   };
 
   const watcher = new LifecycleCallbacks({
@@ -57,7 +57,7 @@ export const TaskElement = ({
       listeners.push(
         onViewModeUpdate((newViewMode) => {
           viewMode = newViewMode;
-          tpl.$cb.run();
+          tpl.$.callbacks.run();
         }),
       );
       listeners.push(
@@ -66,14 +66,14 @@ export const TaskElement = ({
           if (updatedTask) {
             task = updatedTask.task;
             tpl.task = task.value;
-            tpl.$cb.run();
+            tpl.$.callbacks.run();
           }
         }),
       );
 
       task = getTask();
       tpl.task = task.value;
-      tpl.$cb.run();
+      tpl.$.callbacks.run();
     },
     disconnected: () => {
       listeners.cancel();
@@ -105,7 +105,7 @@ export const TaskElement = ({
           onclick: () => {
             task.complete = !task.complete;
             updateTask([task]);
-            tpl.$cb.run();
+            tpl.$.callbacks.run();
           },
           update: ({ attrs }) =>
             attrs({
@@ -184,7 +184,7 @@ export const TaskElement = ({
     </li>
   `;
 
-  tpl.$cb.run();
+  tpl.$.callbacks.run();
 
   return tpl;
 };

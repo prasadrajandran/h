@@ -15,8 +15,8 @@ export const Input = ({ size, ref, update, ...props }: Props = {}) => {
       type="text"
       class="form-control ${inputSize}"
       ${props}
-      ${ref ? _ref(ref) : ''}
-      ${update || ''}
+      ${ref && _ref(ref)}
+      ${update}
     />`,
   );
 };

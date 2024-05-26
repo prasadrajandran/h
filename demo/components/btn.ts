@@ -44,9 +44,9 @@ export const Btn = ({
     <button
       type="button"
       class="btn ${btnClassType} ${btnSize}"
-      ${props || ''}
-      ${ref ? _ref(ref) : ''}
-      ${update || ''}
+      ${props}
+      ${ref && _ref(ref)}
+      ${update}
     >
       ${iconElement} ${child}
     </button>

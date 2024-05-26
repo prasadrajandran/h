@@ -44,12 +44,12 @@ export const BottomBar = ({
   let viewMode = getViewMode();
 
   onTaskUpdate(() => {
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
   });
 
   onViewModeUpdate((newViewMode) => {
     viewMode = newViewMode;
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
   });
 
   const tpl = html<HTMLElement, Directives>/* html */ `
@@ -129,7 +129,7 @@ export const BottomBar = ({
     </div>
   `;
 
-  tpl.$cb.run();
+  tpl.$.callbacks.run();
 
   return tpl;
 };

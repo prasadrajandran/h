@@ -41,4 +41,4 @@ document.body.append(html`
       onTaskUpdate,
     })}
   </div>
-`.$node);
+`.$.node);

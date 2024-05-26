@@ -56,7 +56,7 @@ export const TasksElement = ({
     if (tasks.some(({ operation }) => operation !== 'update')) {
       tpl.tasks = getTasks();
     }
-    tpl.$cb.run();
+    tpl.$.callbacks.run();
   });
 
   const tpl = html<DocumentFragment, TasksDirectives>/* html */ `
@@ -79,7 +79,7 @@ export const TasksElement = ({
     ></ol>
   `;
 
-  tpl.$cb.run();
+  tpl.$.callbacks.run();
 
   return tpl;
 };

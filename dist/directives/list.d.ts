@@ -14,7 +14,12 @@ type ListData<ITEM, ELEMENT extends ListNode> = {
 /**
  * List directive type generator.
  */
-export type ListDirective<LISTS extends Record<ListName, Parameters<typeof createList>[0]['items']>> = LISTS;
+export type ListDirective<LISTS extends Record<ListName, Parameters<typeof createList>[0]['items']>> = {
+    [k in keyof LISTS]: {
+        get: () => LISTS[k];
+        update: (items: LISTS[k]) => void;
+    };
+};
 /**
  * Create a list of nodes.
  *
@@ -41,7 +46,7 @@ export type ListDirective<LISTS extends Record<ListName, Parameters<typeof creat
  * `;
  *
  * tasks.delete('gCoKL9');
- * tpl.tasks = tasks; // Updates DOM
+ * tpl.tasks.update(tasks);
  *
  * @param args List data.
  */

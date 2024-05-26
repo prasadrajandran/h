@@ -20,7 +20,12 @@ type ListData<ITEM, ELEMENT extends ListNode> = {
  */
 export type ListDirective<
   LISTS extends Record<ListName, Parameters<typeof createList>[0]['items']>,
-> = LISTS;
+> = {
+  [k in keyof LISTS]: {
+    get: () => LISTS[k];
+    update: (items: LISTS[k]) => void;
+  };
+};
 
 /**
  * Create a list of nodes.
@@ -48,7 +53,7 @@ export type ListDirective<
  * `;
  *
  * tasks.delete('gCoKL9');
- * tpl.tasks = tasks; // Updates DOM
+ * tpl.tasks.update(tasks);
  *
  * @param args List data.
  */
@@ -62,12 +67,14 @@ export const $list = <ITEM, ELEMENT extends ListNode>(
         const list = { ...opts, container: node };
         Object.defineProperty(template, name, {
           enumerable: true,
-          get: () => list.items,
-          set: (
-            items: Parameters<typeof createList<ITEM, ELEMENT>>[0]['items'],
-          ) => {
-            list.items = items;
-            createList(list);
+          value: {
+            get: () => list.items,
+            update: (
+              items: Parameters<typeof createList<ITEM, ELEMENT>>[0]['items'],
+            ) => {
+              list.items = items;
+              createList(list);
+            },
           },
         });
         createList(list);

@@ -54,7 +54,7 @@ export const TasksElement = ({
 }: TasksProps) => {
   onTaskUpdate((tasks) => {
     if (tasks.some(({ operation }) => operation !== 'update')) {
-      tpl.tasks = getTasks();
+      tpl.tasks.update(getTasks());
     }
     tpl.$.callbacks.run();
   });

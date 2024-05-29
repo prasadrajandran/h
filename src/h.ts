@@ -161,9 +161,12 @@ export const parsedTemplateId = '__PzroJBb1g__';
  *
  * @internal
  * @param i Template expression index position.
+ * @param isAttr Is this going to be an attribute?
  */
-const tagAttrsExp = (i: TemplateExpIndex): TaggedTemplateAttrsExp =>
-  `data-FHF7Sj5kD1S-${i}`;
+const tagAttrsExp = (
+  i: TemplateExpIndex,
+  isAttr: boolean = true,
+): TaggedTemplateAttrsExp => `data-FHF7Sj5kD1S-${i}${isAttr ? '=""' : ''}`;
 
 /**
  * Tags a "node" template expression for interpolation.
@@ -252,13 +255,9 @@ const tag = (
         // TODO: should we escape expression automatically?
 
         const expType = typeof exp;
-        if (exp === null || exp === undefined) {
+        if (exp === null || exp === undefined || expType === 'boolean') {
           // Do nothing
-        } else if (
-          expType === 'string' ||
-          expType === 'number' ||
-          expType === 'boolean'
-        ) {
+        } else if (expType === 'string' || expType === 'number') {
           htmlChunk += exp;
         } else if (expType === 'function') {
           taggedExps.set(expCount, exp as TemplateCallbackExp);
@@ -321,7 +320,7 @@ const interpolate = <
   const refs: TemplateCallbackRef[] = [];
   const callbackExps = new TemplateCallbackSet();
   taggedExps.forEach((exp, expIndex) => {
-    const taggedAttr = tagAttrsExp(expIndex);
+    const taggedAttr = tagAttrsExp(expIndex, false);
 
     const node = fragment.querySelector<HTMLElement>(`[${taggedAttr}]`);
     if (!node) {

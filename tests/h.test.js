@@ -45,8 +45,8 @@ describe('h()', () => {
     `.$.node).toBeInstanceOf(DocumentFragment);
   });
 
-  test('Correctly interpolates strings, numbers, and booleans', () => {
-    const ariaPressed = false;
+  test('Correctly interpolates strings and numbers', () => {
+    const ariaPressed = String(false);
     const min = 40;
     const href = 'https://example.com/';
     let divBtn = null;

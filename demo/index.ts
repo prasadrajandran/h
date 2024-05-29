@@ -22,7 +22,8 @@ retrieveTasks();
 
 document.body.append(html`
   <div class="container text-center" style="max-width: 800px">
-    ${Heading()} ${TaskInput({ getTasks, addTask, updateTask, onTaskUpdate })}
+    ${Heading()}<!---->
+    ${TaskInput({ getTasks, addTask, updateTask, onTaskUpdate })}<!---->
     ${TasksElement({
       getViewMode,
       getTasks,
